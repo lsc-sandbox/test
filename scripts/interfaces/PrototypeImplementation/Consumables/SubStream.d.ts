@@ -1,0 +1,30 @@
+import { ISubStream, SubStreamState } from "../../Interfaces/ISubStream.js";
+import { SubStreamType } from "../../Interfaces/SubStreamType.js";
+import { ISink } from "../../Interfaces/ISink.js";
+import { IAction2 } from "../../Interfaces/IAction2";
+import { IView } from "../../Interfaces/ILayout.js";
+import { IAction1 } from "../../Interfaces/IAction1.js";
+export declare class SubStream implements ISubStream {
+    private _id;
+    private _tag;
+    set id(id: string);
+    get id(): string;
+    set tag(tag: string);
+    get tag(): string;
+    substreamType: SubStreamType;
+    enable(): void;
+    disable(): void;
+    play(sink?: ISink): void;
+    view?: IView | undefined;
+    onstatechange?: IAction2<ISubStream, SubStreamState>;
+    state?: SubStreamState;
+    get isNew(): boolean;
+    isEnabled: boolean;
+    get isDisabled(): boolean;
+    set isDisabled(disable: boolean);
+    private _enableSubStream;
+    constructor(id: string, enableSubStream: IAction1<boolean>, type: SubStreamType, sink?: ISink);
+    onStateChange?: IAction2<ISubStream, SubStreamState>;
+    enabled(): Promise<ISubStream>;
+    disabled(): Promise<ISubStream>;
+}

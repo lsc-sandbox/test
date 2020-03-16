@@ -1,0 +1,1 @@
+{"version":3,"file":"Conference.js","sourceRoot":"","sources":["Conference.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,WAAW,CAAA;AAEnC,MAAM,OAAO,UAAW,SAAQ,OAAO;IACnC,YAAY,OAAe,EAAE,gBAAsC,EAAE,UAA4C,EAAE,cAA4B;QAC3I,KAAK,CAAC,OAAO,EAAE,gBAAgB,EAAE,UAAU,EAAE,cAAc,CAAC,CAAC;IACjE,CAAC;CAEJ"}

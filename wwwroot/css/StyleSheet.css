@@ -1,0 +1,39 @@
+﻿body {
+    background-color:black;
+    color:white;
+}
+h1{
+    text-align:center;
+}
+.container{
+    /*margin-left:100px;*/
+    /*padding-left: 100px;
+    padding-right: 100px;*/ 
+}
+.toggle-button {
+    width: 150px;
+    height: 20px;
+}
+.video-place {
+    width: 400px;
+    height: 400px;
+    padding-top: 200px;
+}
+.column {
+    float: left;
+    height: 30px;
+    padding: 10px;
+}
+.column-spaced {
+    float: left;
+    width: 40%;
+    padding: 10px;
+    height: 30px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}

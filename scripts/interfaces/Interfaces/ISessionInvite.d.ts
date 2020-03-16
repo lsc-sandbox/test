@@ -1,0 +1,37 @@
+import { IScreenStreamArgs, IFileStreamArgs, IDeviceStreamArgs, ISession, IScreenPlayArgs, IPlayArgs, IDevicePlayArgs } from "./ISession";
+import { IScreenStream } from "./IScreenStream";
+import { IAction2 } from "./IAction2";
+import { IFileStream } from "./IFileStream";
+import { IDeviceStream } from "./IDeviceStream";
+import { IParticipant } from "./IParticipant";
+export interface ISessionInvite {
+    startScreenStream(args?: IScreenStreamArgs): Promise<IScreenStream>;
+    screenStream?: IScreenStream;
+    screenStreams?: IScreenStream[];
+    onScreenStreamAdded?: IAction2<ISession, IScreenStream>;
+    onScreenStreamRemoved?: IAction2<ISession, IScreenStream>;
+    startFileStream(args?: IFileStreamArgs): Promise<IFileStream>;
+    fileStream?: IFileStream;
+    fileStreams?: IFileStream[];
+    onFileStreamAdded?: IAction2<ISession, IFileStream>;
+    onFileStreamRemoved?: IAction2<ISession, IFileStream>;
+    startDeviceStream(args?: IDeviceStreamArgs): Promise<IDeviceStream>;
+    deviceStream?: IDeviceStream;
+    deviceStreams?: IDeviceStream[];
+    onDeviceStreamAdded?: IAction2<ISession, IDeviceStream>;
+    onDeviceStreamRemoved?: IAction2<ISession, IDeviceStream>;
+    participants?: IParticipant[];
+    me?: IParticipant;
+    onParticipantAdded?: IAction2<ISession, IParticipant>;
+    onParticipantRemoved?: IAction2<ISession, IParticipant>;
+    autoplayStreams?: boolean;
+    autoplayScreenDisplayStreams?: boolean;
+    autoplayScreenSystemAudioStreams?: boolean;
+    autoplayFileStreams?: boolean;
+    autoplayDeviceCameraStreams?: boolean;
+    autoplayDeviceMicrophoneStreams?: boolean;
+    playStreams(): void;
+    playScreenStreams(args?: IScreenPlayArgs): void;
+    playFileStreams(args?: IPlayArgs): void;
+    playDeviceStreams(args?: IDevicePlayArgs): void;
+}
