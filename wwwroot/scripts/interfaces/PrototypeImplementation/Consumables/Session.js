@@ -7,12 +7,10 @@ import { DefaultConfig } from "./DefaultConfig.js";
 import { DeviceStream } from "./DeviceStream.js";
 import { LogDebug } from "./EntryPoint.js";
 import { Participant } from "./Participant.js";
-import { ReceiveArgs } from "./ReceiveArgs.js";
 import { ScreenStream } from "./ScreenStream.js";
 import { SendStatus } from "./SendStatus.js";
 import { SharedObjects } from "./SharedObjects.js";
 import { Sink } from "./Sink.js";
-import { StringMessageArgs } from "./StringMessageArgs.js";
 import { SubStream } from "./SubStream.js";
 import { DeviceSubStream } from "./DeviceSubStream.js";
 import { DisplaySubStream } from "./DisplaySubStream.js";
@@ -190,6 +188,9 @@ export class Session {
             this.dataChannelConnection.close();
             this.dataChannelConnection = null;
         }
+        //this.participants.forEach((particpant) => {
+        //    particpant.deviceStreams.forEach(stream)
+        //});
         SharedObjects.Instance().onSessionLeave(this);
         this.notifyLeave();
         // I guess this object is now useless, to create join this session, they have to back to the client.
@@ -314,88 +315,90 @@ export class Session {
         /// let open a datachannel on mcu
         // let leave messageing alone
         this.openMcuConnectionForDataChannel(channel);
-        SharedObjects.Instance().createCameraStream(this, this._videoContainer, true, true).then((localMedia) => {
-            this.openSfuUpstreamConnection(channel, localMedia, false, true, true);
-            // channel.addOnRemoteClientJoin((client) => {
-            channel.addOnRemoteUpstreamConnectionUpdate((connectioninfo) => {
-                me.participants.forEach((participant) => {
-                    if (participant.id === connectioninfo.getClientId()) {
-                        if (connectioninfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
-                            //Fix here: need to see what we updated before we replace the new connectionInfo
-                            // not anymore
-                            CentralConnections.Instance().remoteConnectionInfoForCamera.set(connectioninfo.getClientId(), connectioninfo);
+        if (this._videoContainer) {
+            SharedObjects.Instance().createCameraStream(this, this._videoContainer, true, true).then((localMedia) => {
+                this.openSfuUpstreamConnection(channel, localMedia, false, true, true);
+                // channel.addOnRemoteClientJoin((client) => {
+                channel.addOnRemoteUpstreamConnectionUpdate((connectioninfo) => {
+                    me.participants.forEach((participant) => {
+                        if (participant.id === connectioninfo.getClientId()) {
+                            if (connectioninfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
+                                //Fix here: need to see what we updated before we replace the new connectionInfo
+                                // not anymore
+                                CentralConnections.Instance().remoteConnectionInfoForCamera.set(connectioninfo.getClientId(), connectioninfo);
+                            }
+                            if (connectioninfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
+                                //Fix here: need to see what we updated before we replace the new connectionInfo
+                                CentralConnections.Instance().remoteConnectionInfoForScreen.set(connectioninfo.getClientId(), connectioninfo);
+                            }
                         }
-                        if (connectioninfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
-                            //Fix here: need to see what we updated before we replace the new connectionInfo
-                            CentralConnections.Instance().remoteConnectionInfoForScreen.set(connectioninfo.getClientId(), connectioninfo);
+                    });
+                });
+                channel.addOnRemoteClientLeave((clientInfo) => {
+                    for (let i = 0; i < me.participants.length; i++) {
+                        let participant = me.participants[i];
+                        if (participant.id == clientInfo.getId()) {
+                            delete me.participants[i];
+                            CentralConnections.Instance().remoteConnectionInfoForScreen.delete(clientInfo.getId());
+                            CentralConnections.Instance().remoteConnectionInfoForCamera.delete(clientInfo.getId());
                         }
                     }
                 });
-            });
-            channel.addOnRemoteClientLeave((clientInfo) => {
-                for (let i = 0; i < me.participants.length; i++) {
-                    let participant = me.participants[i];
-                    if (participant.id == clientInfo.getId()) {
-                        delete me.participants[i];
-                        CentralConnections.Instance().remoteConnectionInfoForScreen.delete(clientInfo.getId());
-                        CentralConnections.Instance().remoteConnectionInfoForCamera.delete(clientInfo.getId());
+                channel.addOnRemoteUpstreamConnectionOpen((remoteConnectionInfo) => {
+                    let participantForThisConnectionInfo = null;
+                    let createPartipant = true;
+                    me.participants.forEach((participant) => {
+                        if (participant.id == remoteConnectionInfo.getClientId()) {
+                            createPartipant = false;
+                            participantForThisConnectionInfo = participant;
+                        }
+                    });
+                    if (createPartipant) {
+                        participantForThisConnectionInfo = new Participant(remoteConnectionInfo.getClientId(), false);
+                        me.participants.push(participantForThisConnectionInfo);
                     }
-                }
-            });
-            channel.addOnRemoteUpstreamConnectionOpen((remoteConnectionInfo) => {
-                let participantForThisConnectionInfo = null;
-                let createPartipant = true;
-                me.participants.forEach((participant) => {
-                    if (participant.id == remoteConnectionInfo.getClientId()) {
-                        createPartipant = false;
-                        participantForThisConnectionInfo = participant;
+                    if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
+                        CentralConnections.Instance().remoteConnectionInfoForCamera.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
                     }
-                });
-                if (createPartipant) {
-                    participantForThisConnectionInfo = new Participant(remoteConnectionInfo.getClientId(), false);
-                    me.participants.push(participantForThisConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
-                    CentralConnections.Instance().remoteConnectionInfoForCamera.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
-                    CentralConnections.Instance().remoteConnectionInfoForScreen.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
-                    me.openSfuDownstreamConnection(remoteConnectionInfo, channel, false, participantForThisConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
-                    me.openSfuDownstreamConnection(remoteConnectionInfo, channel, true, participantForThisConnectionInfo);
-                }
-            });
-            // wont even have time to turn the autoplay for those in session so don't worty about it for now
-            channel.getRemoteUpstreamConnectionInfos().forEach(function (remoteConnectionInfo) {
-                let participantForThisConnectionInfo = null;
-                let createPartipant = true;
-                me.participants.forEach((participant) => {
-                    if (participant.id != remoteConnectionInfo.getId()) {
-                        createPartipant = false;
-                        participantForThisConnectionInfo = participant;
+                    if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
+                        CentralConnections.Instance().remoteConnectionInfoForScreen.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
+                    }
+                    if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
+                        me.openSfuDownstreamConnection(remoteConnectionInfo, channel, false, participantForThisConnectionInfo);
+                    }
+                    if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
+                        me.openSfuDownstreamConnection(remoteConnectionInfo, channel, true, participantForThisConnectionInfo);
                     }
                 });
-                if (createPartipant) {
-                    participantForThisConnectionInfo = new Participant(remoteConnectionInfo.getId(), false);
-                    me.participants.push(participantForThisConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
-                    CentralConnections.Instance().remoteConnectionInfoForCamera.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
-                    CentralConnections.Instance().remoteConnectionInfoForScreen.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
-                }
-                if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
-                    me.openSfuDownstreamConnection(remoteConnectionInfo, channel, false, participantForThisConnectionInfo); // added downstream someone joins automatically
-                }
-                if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
-                    me.openSfuDownstreamConnection(remoteConnectionInfo, channel, true, participantForThisConnectionInfo); // added downstream someone joins automatically
-                }
+                // wont even have time to turn the autoplay for those in session so don't worty about it for now
+                channel.getRemoteUpstreamConnectionInfos().forEach(function (remoteConnectionInfo) {
+                    let participantForThisConnectionInfo = null;
+                    let createPartipant = true;
+                    me.participants.forEach((participant) => {
+                        if (participant.id != remoteConnectionInfo.getId()) {
+                            createPartipant = false;
+                            participantForThisConnectionInfo = participant;
+                        }
+                    });
+                    if (createPartipant) {
+                        participantForThisConnectionInfo = new Participant(remoteConnectionInfo.getId(), false);
+                        me.participants.push(participantForThisConnectionInfo);
+                    }
+                    if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
+                        CentralConnections.Instance().remoteConnectionInfoForCamera.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
+                    }
+                    if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
+                        CentralConnections.Instance().remoteConnectionInfoForScreen.set(remoteConnectionInfo.getClientId(), remoteConnectionInfo);
+                    }
+                    if (remoteConnectionInfo.getTag() == Session.cameraAndMircophoneConnectionTag) {
+                        me.openSfuDownstreamConnection(remoteConnectionInfo, channel, false, participantForThisConnectionInfo); // added downstream someone joins automatically
+                    }
+                    if (remoteConnectionInfo.getTag() == Session.screenAndSystemAudioConnectionTag) {
+                        me.openSfuDownstreamConnection(remoteConnectionInfo, channel, true, participantForThisConnectionInfo); // added downstream someone joins automatically
+                    }
+                });
             });
-        });
+        }
         //});
     }
     //    let messageDataStream
@@ -416,11 +419,11 @@ export class Session {
                 //onIncomingMessage: IAction2<ISession, IMessageArgs & IReceiveArgs>;
                 if (me.onIncomingMessage != null) {
                     let result = {};
-                    let message = new StringMessageArgs(dataChannelReceiveArgs.getDataString());
-                    let sender = new ReceiveArgs(dataChannelReceiveArgs.getRemoteConnectionInfo().getUserAlias());
+                    //let message: StringMessageArgs = new StringMessageArgs(dataChannelReceiveArgs.getDataString());
+                    //let sender: ReceiveArgs = new ReceiveArgs(dataChannelReceiveArgs.getRemoteConnectionInfo().getUserAlias());
                     //(result as StringMessageArgs) = message;
                     //(result as ReceiveArgs) = sender;
-                    result.message = dataChannelReceiveArgs.getDataString();
+                    result.stringMessage = dataChannelReceiveArgs.getDataString();
                     result.senderId = dataChannelReceiveArgs.getRemoteConnectionInfo().getUserAlias();
                     me.onIncomingMessage(this, result);
                 }

@@ -4,3 +4,6 @@ export class StringMessageArgs {
         this.message = message;
     }
 }
+export class ChatArgs {
+    constructor() { }
+}

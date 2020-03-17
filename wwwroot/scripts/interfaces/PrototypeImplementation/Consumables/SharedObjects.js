@@ -230,11 +230,18 @@ export class SharedObjects {
             var me = this;
             if (updateRequiredToCameraMedia) {
                 me.stopCameraLocalMedia().then(() => {
-                    me.startLocalCameraMedia().then(() => {
+                    if (needCameraVideo || needCameraAudio) {
+                        me.startLocalCameraMedia().then(() => {
+                            me.updatePromiseResolve(true, undefined).then(() => {
+                                resolve();
+                            });
+                        });
+                    }
+                    else {
                         me.updatePromiseResolve(true, undefined).then(() => {
                             resolve();
                         });
-                    });
+                    }
                 });
             }
             else {
@@ -244,11 +251,18 @@ export class SharedObjects {
             }
             if (updateRequiredToScreenMedia) {
                 me.stopScreenLocalMedia().then(() => {
-                    me.startLocalScreenMedia().then(() => {
+                    if (needScreenVideo) {
+                        me.startLocalScreenMedia().then(() => {
+                            me.updatePromiseResolve(undefined, true).then(() => {
+                                resolve();
+                            });
+                        });
+                    }
+                    else {
                         me.updatePromiseResolve(undefined, true).then(() => {
                             resolve();
                         });
-                    });
+                    }
                 });
             }
             else {

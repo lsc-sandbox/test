@@ -109,11 +109,11 @@ export class Client {
         if (args.videoSinkElementId) {
             container = document.getElementById(args.videoSinkElementId);
         }
-        else {
+        else if (args.camera != false) {
             throw new Error("Please provide videoSinkElementId (HTMLElement)");
         }
         // conferenceId: string, container ?: HTMLElement
-        if (container == null) {
+        if (args.camera != false && container == null) {
             throw new Error("Could not find HTML with id: " + args.videoSinkElementId);
         }
         // need for calls

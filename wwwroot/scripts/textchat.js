@@ -17,7 +17,6 @@ class TextChat {
         TextChat.clientJoinButton = document.getElementById('clientJoin');
         TextChat.clientJoinButton.addEventListener("click", this.joinConfererence); // modify       
         TextChat.userId = document.getElementById('userName');
-        TextChat.clientJoinButton.disabled = true;
         TextChat.leaveConferenceButton = document.getElementById('leaveConference');
         TextChat.leaveConferenceButton.addEventListener("click", this.conferenceLeave); // modify    
         TextChat.leaveConferenceButton.disabled = true;
@@ -29,12 +28,15 @@ class TextChat {
             TextChat.conference.onIncomingMessage = (session, message) => {
                 TextChat.writeMessage(message.senderId + ": " + message.stringMessage);
             };
+            TextChat.clientJoinButton.disabled = true;
             TextChat.leaveConferenceButton.disabled = false;
         });
     }
     conferenceLeave() {
         TextChat.conference.leave();
         TextChat.conference = null;
+        TextChat.clientJoinButton.disabled = false;
+        TextChat.leaveConferenceButton.disabled = true;
     }
 }
 TextChat.writeMessage = (msg) => {
@@ -53,3 +55,4 @@ TextChat.clientJoinButton = null;
 TextChat.conference = null;
 TextChat.leaveConferenceButton = null;
 export { TextChat };
+let demo = new TextChat();

@@ -101,14 +101,14 @@ class App {
         }
         else if (App.isCameraOn) {
             App.conference.me.deviceStream.camera.disable();
-            //App.conference.startScreenStream();
+            App.conference.startScreenStream();
             App.isCameraOn = false;
             App.isScreenOn = true;
         }
         else if (App.isScreenOn) {
-            App.conference.me.deviceStream.camera.enable();
-            //App.conference.me.screenStream.stop();
-            //App.conference.startDeviceStream();
+            //App.conference.me.deviceStream.camera.enable();
+            App.conference.me.screenStream.stop();
+            App.conference.startDeviceStream();
             App.isCameraOn = true;
             App.isScreenOn = false;
         }
@@ -137,14 +137,18 @@ class App {
         if (App.isCameraOn) {
             if (!this.CameraMuted) {
                 App.conference.participants.forEach((participant) => {
-                    participant.deviceStream.camera.disable();
+                    if (!participant.isMe) {
+                        participant.deviceStream.camera.disable();
+                    }
                 });
                 this.CameraMuted = true;
                 App.toggleVideoButton.value = "Unmute Video";
             }
             else {
                 App.conference.participants.forEach((participant) => {
-                    participant.deviceStream.camera.enable();
+                    if (!participant.isMe) {
+                        participant.deviceStream.camera.enable();
+                    }
                 });
                 this.CameraMuted = false;
                 App.toggleVideoButton.value = "Mute Video";
