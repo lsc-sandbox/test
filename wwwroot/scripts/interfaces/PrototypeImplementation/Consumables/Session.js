@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { DeviceType } from "../../Interfaces/DeviceType.js";
 import { SessionState } from "../../Interfaces/ISession.js";
 import { StreamState } from "../../Interfaces/IStream.js";
@@ -20,16 +29,17 @@ export class Session {
     constructor(channel, liveSwitchClient, notifyLeave, videoContainer, invitation) {
         this.state = SessionState.New;
         this.sendMessage = (args) => {
+            var _a;
             if (this.canSendMessages) {
                 let sendStatus = new SendStatus(); // need to get the whole participants things sorted out.
-                let future = this.messageDataChannel?.sendDataString(args.stringMessage);
-                future?.then((result) => {
-                    if (args?.onSent) {
-                        args?.onSent(args);
+                let future = (_a = this.messageDataChannel) === null || _a === void 0 ? void 0 : _a.sendDataString(args.stringMessage);
+                future === null || future === void 0 ? void 0 : future.then((result) => {
+                    if (args === null || args === void 0 ? void 0 : args.onSent) {
+                        args === null || args === void 0 ? void 0 : args.onSent(args);
                     }
                 }).fail((ex) => {
-                    if (args?.onFailed) {
-                        args?.onFailed(args, new Error(ex.name + ": " + ex.message));
+                    if (args === null || args === void 0 ? void 0 : args.onFailed) {
+                        args === null || args === void 0 ? void 0 : args.onFailed(args, new Error(ex.name + ": " + ex.message));
                     }
                 });
                 return sendStatus;
@@ -166,9 +176,9 @@ export class Session {
         let channelClaim = new fm.liveswitch.ChannelClaim(channel);
         //channelClaim.setAction(fm.liveswitch.ClaimAction.Claim);
         let token = fm.liveswitch.Token.generateClientJoinToken(this.defaultConfig.DefaultAppId, this.defaultConfig.DefaultUserId, this.defaultConfig.DefaultDevice, this.defaultConfig.ClientId, channelClaim, this.defaultConfig.DefaultSharedSecret);
-        this._LiveSwitchClient.join(channel, token).then(async (channel) => {
+        this._LiveSwitchClient.join(channel, token).then((channel) => __awaiter(this, void 0, void 0, function* () {
             me.OnClientJoinInAChannel(channel);
-        }).fail((ex) => {
+        })).fail((ex) => {
             throw ex;
         });
         //}

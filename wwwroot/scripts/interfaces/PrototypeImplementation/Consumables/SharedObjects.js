@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 export class SharedObjects {
     constructor() {
         // need to be made private
@@ -20,20 +29,23 @@ export class SharedObjects {
         //this.layoutManager = new fm.liveswitch.DomLayoutManager(videoContainer);
     }
     GetCameraVideoDevice() {
-        if (this.cameraLocalMedia && this.cameraLocalMedia?.getVideoInput()) {
-            return this.cameraLocalMedia?.getVideoInput().getId();
+        var _a, _b;
+        if (this.cameraLocalMedia && ((_a = this.cameraLocalMedia) === null || _a === void 0 ? void 0 : _a.getVideoInput())) {
+            return (_b = this.cameraLocalMedia) === null || _b === void 0 ? void 0 : _b.getVideoInput().getId();
         }
         return null;
     }
     GetScreenVideoDevice() {
-        if (this.screenLocalMedia && this.screenLocalMedia?.getVideoInput()) {
-            return this.cameraLocalMedia?.getVideoInput().getId();
+        var _a, _b;
+        if (this.screenLocalMedia && ((_a = this.screenLocalMedia) === null || _a === void 0 ? void 0 : _a.getVideoInput())) {
+            return (_b = this.cameraLocalMedia) === null || _b === void 0 ? void 0 : _b.getVideoInput().getId();
         }
         return null;
     }
     GetCameraAudioDevice() {
-        if (this.cameraLocalMedia && this.cameraLocalMedia?.getAudioInput()) {
-            return this.cameraLocalMedia?.getAudioInput().getId();
+        var _a, _b;
+        if (this.cameraLocalMedia && ((_a = this.cameraLocalMedia) === null || _a === void 0 ? void 0 : _a.getAudioInput())) {
+            return (_b = this.cameraLocalMedia) === null || _b === void 0 ? void 0 : _b.getAudioInput().getId();
         }
         return null;
     }
@@ -300,8 +312,8 @@ export class SharedObjects {
         var me = this;
         let promise = new Promise((resolve, reject) => {
             if (layout != null) {
-                layout?.removeRemoteViews();
-                layout?.unsetLocalView();
+                layout === null || layout === void 0 ? void 0 : layout.removeRemoteViews();
+                layout === null || layout === void 0 ? void 0 : layout.unsetLocalView();
                 layout = null;
             }
             resolve();
@@ -342,7 +354,7 @@ export class SharedObjects {
     }
     startLocalScreenMedia() {
         var me = this;
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             //await this.wait(0);
             if (me.screenLocalMedia != null) {
                 throw new Error("Local media has already been Started");
@@ -392,12 +404,12 @@ export class SharedObjects {
                 //    });
             });
             resolve();
-        });
+        }));
         return promise;
     }
     startLocalCameraMedia() {
         var me = this;
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             //await this.wait(0);
             //if (me.cameraLocalMedia != null) {
             //    throw new Error("Local media has already been Started");
@@ -455,7 +467,7 @@ export class SharedObjects {
                 //});
             });
             resolve();
-        });
+        }));
         return promise;
     }
 }

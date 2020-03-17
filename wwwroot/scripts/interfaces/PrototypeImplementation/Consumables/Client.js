@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { ClientState } from "../../Interfaces/IClient.js";
 import { DefaultConfig } from "./DefaultConfig.js";
 import { LogDebug } from "./EntryPoint.js";
@@ -54,41 +63,43 @@ export class Client {
         // don't think I need the following line
         //this.getinformationfromlocalmedia(); // let this happen ... who cares... it will populated.
     }
-    async connect() {
-        var me = this;
-        this.onstatechange = ((client, state) => {
-            LogDebug(state.toString());
-        });
-        let promise = new Promise((resolve, reject) => {
-            // need to backoff .. maybe later
-            this._LiveSwitchClient.addOnStateChange((state) => {
-                if (state.getState() == fm.liveswitch.ClientState.New) {
-                    me.changeStateTo(ClientState.New);
-                }
-                else if (state.getState() == fm.liveswitch.ClientState.Registering) {
-                    me.changeStateTo(ClientState.Connecting);
-                }
-                else if (state.getState() == fm.liveswitch.ClientState.Registered) {
-                    me.changeStateTo(ClientState.Connected);
-                }
-                else if (state.getState() == fm.liveswitch.ClientState.Unregistered)
-                    me.changeStateTo(ClientState.Disconnected);
-                {
-                }
+    connect() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var me = this;
+            this.onstatechange = ((client, state) => {
+                LogDebug(state.toString());
             });
-            this._LiveSwitchClient.register(this._Token).then((o) => {
-                if (o != null) {
-                    this._Channels = o;
-                }
-                LogDebug("Client is registered");
-                // Do
-                resolve();
-            }).fail((o) => {
-                LogDebug(o.name + ": " + o.message + "\n" + o.stack);
-                reject();
+            let promise = new Promise((resolve, reject) => {
+                // need to backoff .. maybe later
+                this._LiveSwitchClient.addOnStateChange((state) => {
+                    if (state.getState() == fm.liveswitch.ClientState.New) {
+                        me.changeStateTo(ClientState.New);
+                    }
+                    else if (state.getState() == fm.liveswitch.ClientState.Registering) {
+                        me.changeStateTo(ClientState.Connecting);
+                    }
+                    else if (state.getState() == fm.liveswitch.ClientState.Registered) {
+                        me.changeStateTo(ClientState.Connected);
+                    }
+                    else if (state.getState() == fm.liveswitch.ClientState.Unregistered)
+                        me.changeStateTo(ClientState.Disconnected);
+                    {
+                    }
+                });
+                this._LiveSwitchClient.register(this._Token).then((o) => {
+                    if (o != null) {
+                        this._Channels = o;
+                    }
+                    LogDebug("Client is registered");
+                    // Do
+                    resolve();
+                }).fail((o) => {
+                    LogDebug(o.name + ": " + o.message + "\n" + o.stack);
+                    reject();
+                });
             });
+            return promise;
         });
-        return promise;
     }
     //private notifyLeave: IAction1<IConference>;
     //join(conferenceId: string): IConference {
@@ -130,7 +141,7 @@ export class Client {
     }
     // Need to do
     get camera() {
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             this.cameras.then((inputs) => {
                 if (inputs.length > 0) {
                     resolve(inputs[0]);
@@ -141,11 +152,11 @@ export class Client {
             }).catch((ex) => {
                 reject(ex);
             });
-        });
+        }));
         return promise;
     }
     get microphone() {
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             this.microphones.then((inputs) => {
                 if (inputs.length > 0) {
                     resolve(inputs[0]);
@@ -156,11 +167,11 @@ export class Client {
             }).catch((ex) => {
                 reject(ex);
             });
-        });
+        }));
         return promise;
     }
     get screen() {
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             this.screens.then((inputs) => {
                 if (inputs.length > 0) {
                     resolve(inputs[0]);
@@ -171,15 +182,15 @@ export class Client {
             }).catch((ex) => {
                 reject(ex);
             });
-        });
+        }));
         return promise;
     }
     // currently not being updated after once being populated.
     get cameras() {
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let cameraSourrces = new Array(); //
             let localmedia = new fm.liveswitch.LocalMedia(false, true);
-            localmedia?.getVideoSourceInputs().then((inputs) => {
+            localmedia.getVideoSourceInputs().then((inputs) => {
                 inputs.forEach((input) => {
                     let device = new Device(input.getId(), input.getName(), DeviceType.Camera, input);
                     cameraSourrces.push(new CameraSource(device));
@@ -188,14 +199,14 @@ export class Client {
             }).fail((ex) => {
                 reject(ex);
             });
-        });
+        }));
         return promise;
     }
     get microphones() {
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let micSourrces = new Array(); //
             let localmedia = new fm.liveswitch.LocalMedia(true, false);
-            localmedia?.getAudioSourceInputs().then((inputs) => {
+            localmedia.getAudioSourceInputs().then((inputs) => {
                 inputs.forEach((input) => {
                     let device = new Device(input.getId(), input.getName(), DeviceType.Microphone, input);
                     micSourrces.push(new MicrophoneSource(device));
@@ -204,14 +215,14 @@ export class Client {
             }).fail((ex) => {
                 reject(ex);
             });
-        });
+        }));
         return promise;
     }
     get screens() {
-        let promise = new Promise(async (resolve, reject) => {
+        let promise = new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             let screenSourrces = new Array(); //
             let localmedia = new fm.liveswitch.LocalMedia(false, false, true);
-            localmedia?.getVideoSourceInputs().then((inputs) => {
+            localmedia.getVideoSourceInputs().then((inputs) => {
                 let i = 1;
                 inputs.forEach((input) => {
                     let device = new Device(input.getId(), input.getName(), DeviceType.Microphone, input);
@@ -222,7 +233,7 @@ export class Client {
             }).fail((ex) => {
                 reject(ex);
             });
-        });
+        }));
         return promise;
     }
     // Internal

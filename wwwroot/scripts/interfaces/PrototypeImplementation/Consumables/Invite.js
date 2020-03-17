@@ -40,6 +40,7 @@ export class Invite {
         });
     }
     cancel() {
-        this.invitation?.cancel();
+        var _a;
+        (_a = this.invitation) === null || _a === void 0 ? void 0 : _a.cancel();
     }
 }

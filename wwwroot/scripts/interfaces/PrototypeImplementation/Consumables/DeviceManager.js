@@ -50,7 +50,7 @@ export class DeviceManager {
         let promise = new Promise((resolve, reject) => {
             let devices = new Array();
             let localmedia = new fm.liveswitch.LocalMedia(false, true);
-            localmedia?.getVideoSourceInputs().then((inputs) => {
+            localmedia === null || localmedia === void 0 ? void 0 : localmedia.getVideoSourceInputs().then((inputs) => {
                 inputs.forEach((input) => {
                     let device = new DeviceInfo(input.getId(), input.getName(), DeviceKind.VideoInput);
                     devices.push(device);
@@ -66,7 +66,7 @@ export class DeviceManager {
         let promise = new Promise((resolve, reject) => {
             let devices = new Array();
             let localmedia = new fm.liveswitch.LocalMedia(true, false);
-            localmedia?.getAudioSourceInputs().then((inputs) => {
+            localmedia === null || localmedia === void 0 ? void 0 : localmedia.getAudioSourceInputs().then((inputs) => {
                 inputs.forEach((input) => {
                     let device = new DeviceInfo(input.getId(), input.getName(), DeviceKind.AudioInput);
                     devices.push(device);
