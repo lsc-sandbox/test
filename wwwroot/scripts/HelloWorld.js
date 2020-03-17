@@ -21,6 +21,7 @@ class helloWorld {
     conferenceLeave() {
         helloWorld.conference.leave();
         helloWorld.conference = null;
+        helloWorld.leaveConferenceButton.disabled = true;
     }
 }
 helloWorld.leaveConferenceButton = null;

@@ -13,6 +13,7 @@ class helloWorld {
     conferenceLeave() {
         helloWorld.conference.leave();
         helloWorld.conference = null;
+        helloWorld.leaveConferenceButton.disabled = true;
     }
    
     static leaveConferenceButton?: HTMLButtonElement = null;
