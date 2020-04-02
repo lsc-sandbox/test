@@ -891,7 +891,7 @@ declare module "src/Interfaces/IClient" {
     import { IOutboundSessionInvite } from "src/Interfaces/IOutboundSessionInvite";
     import { IInboundSessionInvite } from "src/Interfaces/IInboundSessionInvite";
     export interface IClient {
-        connect(): Promise<void>;
+        connect(): Promise<IClient>;
         onIncomingCall?: IAction2<IClient, IInboundSessionInvite & ICall>;
         calls?: ICall[];
         heldCalls?: ICall[];
@@ -1392,7 +1392,7 @@ declare module "src/beta/Client" {
         isConnecting?: boolean;
         isConnected?: boolean;
         isDisconnected?: boolean;
-        connect(): Promise<void>;
+        connect(): Promise<Client>;
         private notifyConferenceLeaving;
         join(args: IJoinConferenceArgs): IConference;
         conferences: Conference[];

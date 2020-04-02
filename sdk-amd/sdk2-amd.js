@@ -5025,7 +5025,7 @@ define("src/beta/Client", ["require", "exports", "src/Interfaces/IClient", "src/
                         }
                         EntryPoint_js_3.LogDebug("Client is registered");
                         // Do
-                        resolve();
+                        resolve(me);
                     }).fail((o) => {
                         EntryPoint_js_3.LogDebug(o.name + ": " + o.message + "\n" + o.stack);
                         reject();
