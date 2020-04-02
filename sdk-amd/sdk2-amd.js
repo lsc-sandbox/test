@@ -5075,6 +5075,19 @@ define("src/beta/Client", ["require", "exports", "src/Interfaces/IClient", "src/
             if (args.playLocalCamera != false || args.playLocalScreenshare != false || args.streamRemoteCamera != false || args.streamRemoteScreenshare != false) {
                 needContainer = true;
             }
+            if (needContainer && !args.videoSinkElementId) {
+                let bodyElement = document.getElementsByTagName("BODY")[0];
+                let videoElement = document.createElement("div");
+                bodyElement.appendChild(videoElement);
+                videoElement.id = "video_Generated_Element_63ad0d11_89ce_44fe_b8dd_f0506a815f88";
+                videoElement.style.position = "fixed";
+                videoElement.style.top = "0%";
+                videoElement.style.left = "0%";
+                videoElement.style.width = "100%";
+                videoElement.style.height = "100%";
+                videoElement.style.zIndex = "-100";
+                args.videoSinkElementId = videoElement.id;
+            }
             if (args.videoSinkElementId) {
                 container = document.getElementById(args.videoSinkElementId);
             }
@@ -5383,10 +5396,10 @@ define("src/beta/SessionInvite", ["require", "exports"], function (require, expo
     }
     exports.SessionInvite = SessionInvite;
 });
-define("src/beta/OutboundSessionInvite", ["require", "exports", "src/beta/SessionInvite"], function (require, exports, SessionInvite_1) {
+define("src/beta/OutboundSessionInvite", ["require", "exports", "src/beta/SessionInvite"], function (require, exports, SessionInvite_js_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class OutboundSessionInvite extends SessionInvite_1.SessionInvite {
+    class OutboundSessionInvite extends SessionInvite_js_1.SessionInvite {
         accepted() {
             throw new Error("Method not implemented.");
         }
@@ -5408,10 +5421,10 @@ define("src/beta/OutboundSessionInvite", ["require", "exports", "src/beta/Sessio
     }
     exports.OutboundSessionInvite = OutboundSessionInvite;
 });
-define("src/beta/InboundSessionInvite", ["require", "exports", "src/beta/SessionInvite"], function (require, exports, SessionInvite_2) {
+define("src/beta/InboundSessionInvite", ["require", "exports", "src/beta/SessionInvite"], function (require, exports, SessionInvite_js_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class InbountSesssionInvite extends SessionInvite_2.SessionInvite {
+    class InbountSesssionInvite extends SessionInvite_js_2.SessionInvite {
         playStreams() {
             throw new Error("Method not implemented.");
         }
@@ -5458,7 +5471,7 @@ define("src/Interfaces/SourceType", ["require", "exports"], function (require, e
 // import liveswitch from 'npm-liveswitch/fm.liveswitch';
 // require('fm.liveswitch');
 // import 'fm.liveswitch/fm.liveswitch';
-define("src/index", ["require", "exports", "src/Interfaces/ISession", "src/beta/CameraSource", "src/beta/Client", "src/beta/Session", "src/beta/DeviceManager", "src/beta/OutboundSessionInvite", "src/beta/Conference", "src/beta/InboundSessionInvite", "src/beta/SendArgs", "src/beta/SessionInvite", "src/beta/Stream", "src/beta/SubStream", "src/beta/Device", "src/beta/Participant", "src/beta/DevicePlayArgs", "src/Interfaces/SessionInviteRejectReason", "src/Interfaces/DeviceType", "src/Interfaces/SourceType", "src/Interfaces/StreamType", "src/Interfaces/SubStreamType", "src/beta/MessageArgs", "src/beta/StringMessageArgs", "src/beta/StringMessageArgs"], function (require, exports, ISession_js_2, CameraSource_js_2, Client_js_1, Session_js_2, DeviceManager_js_1, OutboundSessionInvite_js_1, Conference_js_2, InboundSessionInvite_js_1, SendArgs_js_1, SessionInvite_js_1, Stream_js_3, SubStream_js_4, Device_js_3, Participant_js_2, DevicePlayArgs_js_1, SessionInviteRejectReason_js_1, DeviceType_js_3, SourceType_js_1, StreamType_js_3, SubStreamType_js_3, MessageArgs_js_1, StringMessageArgs_js_1, StringMessageArgs_js_2) {
+define("src/index", ["require", "exports", "src/Interfaces/ISession", "src/beta/CameraSource", "src/beta/Client", "src/beta/Session", "src/beta/DeviceManager", "src/beta/OutboundSessionInvite", "src/beta/Conference", "src/beta/InboundSessionInvite", "src/beta/SendArgs", "src/beta/SessionInvite", "src/beta/Stream", "src/beta/SubStream", "src/beta/Device", "src/beta/Participant", "src/beta/DevicePlayArgs", "src/Interfaces/SessionInviteRejectReason", "src/Interfaces/DeviceType", "src/Interfaces/SourceType", "src/Interfaces/StreamType", "src/Interfaces/SubStreamType", "src/beta/MessageArgs", "src/beta/StringMessageArgs", "src/beta/StringMessageArgs"], function (require, exports, ISession_js_2, CameraSource_js_2, Client_js_1, Session_js_2, DeviceManager_js_1, OutboundSessionInvite_js_1, Conference_js_2, InboundSessionInvite_js_1, SendArgs_js_1, SessionInvite_js_3, Stream_js_3, SubStream_js_4, Device_js_3, Participant_js_2, DevicePlayArgs_js_1, SessionInviteRejectReason_js_1, DeviceType_js_3, SourceType_js_1, StreamType_js_3, SubStreamType_js_3, MessageArgs_js_1, StringMessageArgs_js_1, StringMessageArgs_js_2) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.SessionState = ISession_js_2.SessionState;
@@ -5470,7 +5483,7 @@ define("src/index", ["require", "exports", "src/Interfaces/ISession", "src/beta/
     exports.Conference = Conference_js_2.Conference;
     exports.InbountSesssionInvite = InboundSessionInvite_js_1.InbountSesssionInvite;
     exports.SendArgs = SendArgs_js_1.SendArgs;
-    exports.SessionInvite = SessionInvite_js_1.SessionInvite;
+    exports.SessionInvite = SessionInvite_js_3.SessionInvite;
     exports.Stream = Stream_js_3.Stream;
     exports.SubStream = SubStream_js_4.SubStream;
     exports.Device = Device_js_3.Device;
